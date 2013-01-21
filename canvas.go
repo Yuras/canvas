@@ -317,35 +317,13 @@ func (self Canvas) Fit(width uint, height uint) error {
 
 func (self Canvas) thumbnail(width uint, height uint, ratio float64) error {
 
-	if ratio < 1.0 {
-		// Origin image is smaller than the thumbnail image.
-		max := uint(math.Max(float64(width), float64(height)))
-
-		// Empty replacement buffer with transparent background.
-		replacement := New()
-
-		replacement.SetBackgroundColor("none")
-
-		replacement.Blank(max, max)
-
-		// Putting original image in the center of the replacement canvas.
-		replacement.AppendCanvas(self, int(int(width-self.Width())/2), int(int(height-self.Height())/2))
-
-		// Replacing wand
-		C.DestroyMagickWand(self.wand)
-
-		self.wand = C.CloneMagickWand(replacement.wand)
-
-	} else {
-		// Is bigger, just resizing.
-		err := self.Resize(uint(float64(self.Width())/ratio), uint(float64(self.Height())/ratio))
-		if err != nil {
-			return err
-		}
+	err := self.Resize(uint(float64(self.Width())/ratio), uint(float64(self.Height())/ratio))
+	if err != nil {
+		return err
 	}
 
 	// Now we have an image that we can use to crop the thumbnail from.
-	err := self.Crop(int(int(self.Width()-width)/2), int(int(self.Height()-height)/2), width, height)
+	err = self.Crop(int(int(self.Width()-width)/2), int(int(self.Height()-height)/2), width, height)
 
 	if err != nil {
 		return err
