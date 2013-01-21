@@ -424,6 +424,22 @@ func (self Canvas) Quality() uint {
 	return uint(C.MagickGetImageCompressionQuality(self.wand))
 }
 
+// Set image format
+func (self Canvas) SetFormat(format string) error {
+	success := C.MagickSetImageFormat(self.wand, C.CString(format))
+
+	if success == C.MagickFalse {
+		return fmt.Errorf("Could not set compression quality: %s", self.Error())
+	}
+
+	return nil
+}
+
+// Returns image format
+func (self Canvas) Format() string {
+	return C.GoString(C.MagickGetImageFormat(self.wand))
+}
+
 /*
 // Sets canvas's foreground color.
 func (self Canvas) SetColor(color string) (bool) {
